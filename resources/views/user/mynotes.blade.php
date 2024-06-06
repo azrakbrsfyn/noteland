@@ -22,7 +22,7 @@
         </div>
     </form>
     <a class="flex bg-indigo-950 p-2 text-white items-center rounded-3xl justify-center w-44 space-x-2 hover:bg-indigo-700 transition duration-500"
-        href="#">
+        href="{{ route('dashboard.noteland.create') }}">
         <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
             <path fill="currentColor"
                 d="M17.5 21h1v-2.5H21v-1h-2.5V15h-1v2.5H15v1h2.5zm.5 2q-2.075 0-3.537-1.463T13 18t1.463-3.537T18 13t3.538 1.463T23 18t-1.463 3.538T18 23M7 9h10V7H7zm4.675 12H5q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v6.7q-.725-.35-1.463-.525T18 11q-.275 0-.513.012t-.487.063V11H7v2h6.125q-.45.425-.812.925T11.675 15H7v2h4.075q-.05.25-.062.488T11 18q0 .825.15 1.538T11.675 21" />
@@ -37,8 +37,9 @@
                 <div
                     class="bg-white shadow-xl text-indigo-950 w-60 p-6 rounded-xl mt-5 sm:mr-5 hover:scale-105 transition duration-500">
                     <h4 class="font-bold text-xl">{{ $note->title }}</h4>
-                    <p class="font-bold text-sm text-gray-500">2/6/2024</p>
-                    <p class="text-sm mb-8 text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    <p class="font-bold text-sm text-gray-500">
+                        {{ \Carbon\Carbon::parse($note->updated_at)->format('F j, Y') }}</p>
+                    <p class="text-sm mb-8 text-gray-500">
                         {{ $note->note_content }}</p>
                     <div class="flex items-center space-x-2 justify-between">
                         <a href="#"

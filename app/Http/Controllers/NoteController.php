@@ -6,6 +6,9 @@ use App\Models\Note;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class NoteController extends Controller
 {
@@ -23,7 +26,8 @@ class NoteController extends Controller
     public function show_note()
     {
         $user = Auth::user();
-        $my_notes = Note::where('id', $user->id)->orderBy('id', 'desc')->get();
+        $my_notes = $user->notes()->orderBy('id', 'DESC')->get();
+        // dd($my_notes);
         return view('user.mynotes', [
             'user' => $user,
             'notes' => $my_notes
@@ -35,7 +39,7 @@ class NoteController extends Controller
      */
     public function create()
     {
-        //
+        return view("user.newNotes");
     }
 
     /**
@@ -43,7 +47,33 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validation
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'note' => 'required|string'
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            Note::create([
+                'user_id' => Auth::id(),
+                'title' => $validated['title'],
+                'note_content' => $validated['note'],
+                'slug' => Str::slug($request->name)
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('dashboard.noteland.my-notes');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $error = ValidationException::withMessages([
+                'system_error' => ['System Error!' . $e->getMessage()],
+            ]);
+
+            throw $error;
+        }
     }
 
     /**
